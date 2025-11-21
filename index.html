@@ -1,1 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Calculator</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f2f2f2;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
+  .calculator {
+    background: #1e1e1e;
+    border-radius: 20px;
+    padding: 20px;
+    width: 350px;
+    max-width: 90%;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+  }
+
+  .display {
+    background: #3b3b3b;
+    color: #fff;
+    font-size: 2.5em;
+    text-align: right;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+    min-height: 60px;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .button {
+    background: #4e4e4e;
+    color: white;
+    font-size: 1.5em;
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .button.operator {
+    background: #ff9500;
+  }
+
+  .button:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+
+  .button.zero {
+    grid-column: span 1;
+  }
+
+  .button.off {
+    background: #d9534f;
+  }
+
+  /* Desktop adjustment */
+  @media(min-width: 600px){
+    .calculator {
+      width: 400px;
+    }
+
+    .button {
+      padding: 25px;
+      font-size: 1.8em;
+    }
+
+    .display {
+      font-size: 3em;
+      padding: 25px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="calculator">
+  <div class="display" id="display">0</div>
+  <div class="buttons">
+    <button class="button off" onclick="toggleCalculator()">ON/OFF</button>
+    <button class="button operator" onclick="clearDisplay()">C</button>
+    <button class="button operator" onclick="deleteChar()">DEL</button>
+    <button class="button operator" onclick="appendOperator('/')">/</button>
+
+    <button class="button" onclick="appendNumber('7')">7</button>
+    <button class="button" onclick="appendNumber('8')">8</button>
+    <button class="button" onclick="appendNumber('9')">9</button>
+    <button class="button operator" onclick="appendOperator('*')">×</button>
+
+    <button class="button" onclick="appendNumber('4')">4</button>
+    <button class="button" onclick="appendNumber('5')">5</button>
+    <button class="button" onclick="appendNumber('6')">6</button>
+    <button class="button operator" onclick="appendOperator('-')">−</button>
+
+    <button class="button" onclick="appendNumber('1')">1</button>
+    <button class="button" onclick="appendNumber('2')">2</button>
+    <button class="button" onclick="appendNumber('3')">3</button>
+    <button class="button operator" onclick="appendOperator('+')">+</button>
+
+    <button class="button zero" onclick="appendNumber('0')">0</button>
+    <button class="button" onclick="appendNumber('.')">.</button>
+    <button class="button operator" onclick="appendPercentage()">%</button>
+    <button class="button operator" onclick="calculateResult()">=</button>
+  </div>
+</div>
+
+<script>
+let display = document.getElementById('display');
+let currentInput = '';
+let isOn = true;
+
+function updateDisplay() {
+  display.textContent = currentInput || '0';
+}
+
+function appendNumber(number) {
+  if(!isOn) return;
+  if (number === '.' && currentInput.includes('.')) return;
+  currentInput += number;
+  updateDisplay();
+}
+
+function appendOperator(operator) {
+  if(!isOn) return;
+  if (currentInput === '') return;
+  const lastChar = currentInput.slice(-1);
+  if ('+-*/'.includes(lastChar)) {
+    currentInput = currentInput.slice(0, -1);
+  }
+  currentInput += operator;
+  updateDisplay();
+}
+
+function appendPercentage() {
+  if(!isOn) return;
+  try {
+    currentInput = (eval(currentInput)/100).toString();
+  } catch {
+    currentInput = 'Error';
+  }
+  updateDisplay();
+}
+
+function clearDisplay() {
+  if(!isOn) return;
+  currentInput = '';
+  updateDisplay();
+}
+
+function deleteChar() {
+  if(!isOn) return;
+  currentInput = currentInput.slice(0, -1);
+  updateDisplay();
+}
+
+function calculateResult() {
+  if(!isOn) return;
+  try {
+    currentInput = eval(currentInput).toString();
+  } catch {
+    currentInput = 'Error';
+  }
+  updateDisplay();
+}
+
+function toggleCalculator() {
+  isOn = !isOn;
+  if(!isOn) {
+    currentInput = '';
+    display.textContent = '';
+  } else {
+    updateDisplay();
+  }
+}
+</script>
+</body>
+</html>
